@@ -82,6 +82,10 @@
 			   <20 0 &gpio2 17 0>,	/* D14 */
 			   <21 0 &gpio2 18 0>;	/* D15 */
 	};
+	
+	zephyr,user {
+		io-channels = <&adc405 0>;
+	};
 };
 
 &clk_ipo {
@@ -102,6 +106,8 @@
 
 &gpio2 {
 	status = "okay";
+	/*pinctrl-0 = <&gpio2_pin7>;
+    pinctrl-names = "default";*/
 };
 
 &gpio3 {
@@ -111,6 +117,11 @@
 &gpio4 {
 	status = "okay";
 };
+
+/*&gpio2_pin7 {
+    gpio-controller;
+    label = "GPIO_PIN_7";
+};*/
 
 &uart0 {
 	clock-source = <ADI_MAX32_PRPH_CLK_SRC_IBRO>;
@@ -149,10 +160,34 @@ arduino_serial: &uart1 {
 	power-source = <MAX32_VSEL_VDDIOH>;
 };
 
-arduino_spi: &spi1 {
+&spi1 {
 	pinctrl-0 = <&spi1a_miso_p1_28 &spi1a_mosi_p1_29 &spi1a_sck_p1_26
 		     &spi1a_ss0_p1_23>;
 	pinctrl-names = "default";
+	compatible = "adi,max32-spi";
+	status = "okay";
+
+	adc405: adc405@0 {
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(2)>;
+		gp1-gpios = <&gpio2 6 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+		gp0-gpios = <&gpio2 7 (GPIO_PULL_DOWN | GPIO_ACTIVE_LOW)>;
+		conversion-gpios = <&gpio2 8 (GPIO_PULL_DOWN)>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		#io-channel-cells = <1>;
+		status = "okay";
+		compatible = "adi,ad405x-adc";
+
+		channel@0 {
+			reg = <0>;
+			zephyr,gain = "ADC_GAIN_1";
+			zephyr,reference = "ADC_REF_INTERNAL";
+			zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+			zephyr,resolution = <16>;
+			zephyr,vref-mv = <3300>;
+		};
+	};
 };
 
 &spi4a_miso_p1_2 {
