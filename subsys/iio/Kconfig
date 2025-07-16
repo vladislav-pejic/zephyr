@@ -1,0 +1,14 @@
+# Copyright (c) 2025 Analog Devices Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig IIO
+	bool "IIO"
+
+if IIO
+
+module = IIO
+module-str = IIO
+module-help = Sets log level for IIO support
+source "subsys/logging/Kconfig.template.log_config"
+
+endif

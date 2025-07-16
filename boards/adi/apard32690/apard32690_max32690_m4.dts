@@ -75,7 +75,7 @@
 			   <12 0 &gpio1 24 0>,	/* D6 */
 			   <13 0 &gpio1 25 0>,	/* D7 */
 			   <14 0 &gpio1 31 0>,	/* D8 */
-			   <15 0 &gpio1 30 0>,	/* D9 */
+			   <15 0 &gpio1 31 0>,	/* D9 */
 			   <16 0 &gpio1 23 0>,	/* D10 */
 			   <17 0 &gpio1 29 0>,	/* D11 */
 			   <18 0 &gpio1 28 0>,	/* D12 */
@@ -113,6 +113,10 @@
 		device_type = "memory";
 		reg = <0x70000000 DT_SIZE_M(64)>;
 		zephyr,memory-region = "SDRAM2";
+	};
+
+	zephyr,user {
+		io-channels = <&adc4052_eval_ad4052_ardz 0>;
 	};
 };
 
@@ -185,6 +189,29 @@ arduino_spi: &spi1 {
 	pinctrl-0 = <&spi1a_miso_p1_28 &spi1a_mosi_p1_29 &spi1a_sck_p1_26
 		     &spi1a_ss0_p1_23>;
 	pinctrl-names = "default";
+	status = "okay";
+
+	adc4052_eval_ad4052_ardz: adc4052@0 {
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(2)>;
+		gp1-gpios = <&gpio1 31 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+		gp0-gpios = <&gpio1 31 (GPIO_PULL_DOWN)>;
+		conversion-gpios = <&gpio1 24 (GPIO_ACTIVE_HIGH | MAX32_GPIO_VSEL_VDDIOH)>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		#io-channel-cells = <1>;
+		status = "okay";
+		compatible = "adi,ad4052-adc";
+
+		channel@0 {
+			reg = <0>;
+			zephyr,gain = "ADC_GAIN_1";
+			zephyr,reference = "ADC_REF_INTERNAL";
+			zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+			zephyr,resolution = <16>;
+			zephyr,vref-mv = <2500>;
+		};
+	};
 };
 
 &spi4a_miso_p1_2 {

@@ -13,6 +13,10 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/byteorder.h>
 
+#ifdef CONFIG_IIO
+#include <zephyr/iio/iio.h>
+#endif /* CONFIG_IIO */
+
 LOG_MODULE_REGISTER(adc_ad405x, CONFIG_ADC_LOG_LEVEL);
 
 #define ADC_CONTEXT_USES_KERNEL_TIMER
@@ -175,6 +179,9 @@ struct adc_ad405x_data {
 	struct k_sem sem_drdy;
 	uint8_t has_drdy;
 #endif
+#if CONFIG_IIO
+	struct iio_dev *iio_dev;
+#endif /* CONFIG_IIO */
 };
 
 static bool ad405x_bus_is_ready_spi(const union ad405x_bus *bus)
@@ -894,10 +901,33 @@ static int adc_ad405x_init(const struct device *dev)
 	}
 #endif
 
+#if CONFIG_IIO
+	ret = iio_device_register(data->iio_dev);
+#endif /* CONFIG_IIO */
+
 	adc_context_unlock_unconditionally(&data->ctx);
 	data->dev = dev;
 	return ret;
 }
+
+#ifdef CONFIG_IIO
+
+#define AD405X_DIFF_CHANNEL(_sign, _real_bits)					\
+	.type = IIO_VOLTAGE,							\
+	.indexed = 1,								\
+	.differential = 1,							\
+	.channel = 0,								\
+	.scan_index = 0,							\
+	.scan_type = {								\
+		.sign = _sign,							\
+		.realbits = _real_bits,						\
+		.endianness = IIO_CPU						\
+	},
+
+static const struct iio_chan_spec ad405x_channel = {
+	AD405X_DIFF_CHANNEL('s', AD4052_ADC_RESOLUTION)
+};
+#endif /* CONFIG_IIO */
 
 static DEVICE_API(adc, ad405x_api_funcs) = {
 	.channel_setup = ad405x_channel_setup,
@@ -927,7 +957,11 @@ static DEVICE_API(adc, ad405x_api_funcs) = {
 		   (AD405X_GPIO_PROPS0(n)))
 
 #define AD405X_INIT(t, n) \
-	static struct adc_ad405x_data ad##t##_data_##n = {};                                     \
+	IF_ENABLED(CONFIG_IIO, (IIO_DEVICE_DEFINE(ad##t##_iio_##n, DT_INST_AD405X(n, t), 	 \
+							&ad405x_channel, 1);))	 		 \
+	static struct adc_ad405x_data ad##t##_data_##n = { 					 \
+		IF_ENABLED(CONFIG_IIO, (.iio_dev = &ad##t##_iio_##n,))			 	 \
+	};                                     							 \
 	static const struct adc_ad405x_config ad##t##_config_##n =  {                            \
 		.bus = {.spi = SPI_DT_SPEC_GET(DT_INST_AD405X(n, t), AD405X_SPI_CFG, 0)},        \
 		.conversion = GPIO_DT_SPEC_GET_BY_IDX(DT_INST_AD405X(n, t), conversion_gpios, 0),\
@@ -935,7 +969,7 @@ static DEVICE_API(adc, ad405x_api_funcs) = {
 		.chip_id = t,                                                                    \
 		.active_mode = AD405X_SAMPLE_MODE_OP,                                            \
 		.spec = ADC_DT_SPEC_STRUCT(DT_INST(n, DT_DRV_COMPAT), 0)                         \
-		};                                                                               \
+		}; 	                                                                         \
 	DEVICE_DT_DEFINE(DT_INST_AD405X(n, t), adc_ad405x_init, NULL, &ad##t##_data_##n,         \
 			&ad##t##_config_##n, POST_KERNEL,                                        \
 			CONFIG_ADC_INIT_PRIORITY, &ad405x_api_funcs);
