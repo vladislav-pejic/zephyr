@@ -957,11 +957,7 @@ static DEVICE_API(adc, ad405x_api_funcs) = {
 		   (AD405X_GPIO_PROPS0(n)))
 
 #define AD405X_INIT(t, n) \
-	IF_ENABLED(CONFIG_IIO, (IIO_DEVICE_DEFINE(ad##t##_iio_##n, DT_INST_AD405X(n, t), 	 \
-							&ad405x_channel, 1);))	 		 \
-	static struct adc_ad405x_data ad##t##_data_##n = { 					 \
-		IF_ENABLED(CONFIG_IIO, (.iio_dev = &ad##t##_iio_##n,))			 	 \
-	};                                     							 \
+	static struct adc_ad405x_data ad##t##_data_##n = {};					 \
 	static const struct adc_ad405x_config ad##t##_config_##n =  {                            \
 		.bus = {.spi = SPI_DT_SPEC_GET(DT_INST_AD405X(n, t), AD405X_SPI_CFG, 0)},        \
 		.conversion = GPIO_DT_SPEC_GET_BY_IDX(DT_INST_AD405X(n, t), conversion_gpios, 0),\
@@ -970,7 +966,7 @@ static DEVICE_API(adc, ad405x_api_funcs) = {
 		.active_mode = AD405X_SAMPLE_MODE_OP,                                            \
 		.spec = ADC_DT_SPEC_STRUCT(DT_INST(n, DT_DRV_COMPAT), 0)                         \
 		}; 	                                                                         \
-	DEVICE_DT_DEFINE(DT_INST_AD405X(n, t), adc_ad405x_init, NULL, &ad##t##_data_##n,         \
+	ADC_DEVICE_DT_DEFINE(DT_INST_AD405X(n, t), adc_ad405x_init, NULL, &ad##t##_data_##n,     \
 			&ad##t##_config_##n, POST_KERNEL,                                        \
 			CONFIG_ADC_INIT_PRIORITY, &ad405x_api_funcs);
 

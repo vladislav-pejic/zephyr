@@ -1,0 +1,107 @@
+compatible: "iio-lib,iio-channel"
+description: IIO channel node for Zephyr IIO subsystem.
+
+properties:      
+  chan-type:
+    type: int
+    description: |
+          What type of measurement is the channel making.
+            0 # IIO_CHAN_TYPE_VOLTAGE
+            1 # IIO_CHAN_TYPE_CURRENT
+            2 # IIO_CHAN_TYPE_POWER
+            3 # IIO_CHAN_TYPE_ACCEL
+            4 # IIO_CHAN_TYPE_ANGL_VELOCITY
+            5 # IIO_CHAN_TYPE_MAGNETIC
+            6 # IIO_CHAN_TYPE_LIGHT
+            7 # IIO_CHAN_TYPE_INTENSITY
+            8 # IIO_CHAN_TYPE_PROXIMITY
+            9 # IIO_CHAN_TYPE_TEMPERATURE
+            10 # IIO_CHAN_TYPE_INCLINOMETER
+            11 # IIO_CHAN_TYPE_ROTATION
+            12 # IIO_CHAN_TYPE_ANGLE
+            13 # IIO_CHAN_TYPE_TIMESTAMP
+            14 # IIO_CHAN_TYPE_CAPACITANCE
+            15 # IIO_CHAN_TYPE_ALTVOLTAGE
+            16 # IIO_CHAN_TYPE_CCTEMP
+            17 # IIO_CHAN_TYPE_PRESSURE
+            18 # IIO_CHAN_TYPE_HUMIDITYRELATIVE
+            19 # IIO_CHAN_TYPE_ACTIVITY
+            20 # IIO_CHAN_TYPE_STEPS
+            21 # IIO_CHAN_TYPE_ENERGY
+            22 # IIO_CHAN_TYPE_DISTANCE
+            23 # IIO_CHAN_TYPE_VELOCITY
+            24 # IIO_CHAN_TYPE_CONCENTRATION
+            25 # IIO_CHAN_TYPE_RESISTANCE
+            26 # IIO_CHAN_TYPE_PH
+            27 # IIO_CHAN_TYPE_UVINDEX
+            28 # IIO_CHAN_TYPE_ELECTRICALCONDUCTIVITY
+            29 # IIO_CHAN_TYPE_COUNT
+            30 # IIO_CHAN_TYPE_INDEX
+            31 # IIO_CHAN_TYPE_GRAVITY
+            32 # IIO_CHAN_TYPE_POSITIONRELATIVE
+            33 # IIO_CHAN_TYPE_PHASE
+            34 # IIO_CHAN_TYPE_MASSCONCENTRATION
+            35 # IIO_CHAN_TYPE_DELTA_ANGLE
+            36 # IIO_CHAN_TYPE_DELTA_VELOCITY
+            37 # IIO_CHAN_TYPE_GENERIC_DATA
+            38 # IIO_CHAN_TYPE_FLAGS
+    enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+      25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38]
+
+  channel:
+    type: int
+    description:
+      What number do we wish to assign the channel.
+
+  channel2:
+    type: int
+    description: |
+      If there is a second number for a differential channel then this is it.
+      If modified is set then the value here specifies the modifier.
+
+  indexed:
+    type: boolean
+    description: |
+      Specify the channel has a numerical index. If not, the channel index number will be
+      suppressed for sysfs attributes but not for event codes.
+
+  differential:
+    type: boolean
+    description: |
+      Channel is differential.
+
+  scan-index:
+    type: int
+    description: |
+      Monotonic index to give ordering in scans when read from a buffer.
+
+  scan-type-sign:
+    type: string
+    description: "'s' or 'u' to specify signed or unsigned."
+    enum: ["s", "u"]
+
+  scan-type-realbits:
+    type: int
+    description: Number of valid bits of data.
+
+  scan-type-storagebits:
+    type: int
+    description: Realbits + padding.
+
+  scan-type-shift:
+    type: int
+    description: Shift right by this before masking out realbits.
+
+  scan-type-repeat:
+    type: int
+    description: |
+      Number of times real/storage bits repeats. When the repeat element is more than 1, then the type element will show a repeat value. Otherwise, the number of repetitions is omitted.
+
+  scan-type-endianness:
+    type: int
+    enum: [0, 1, 2]
+    description: |
+      Endianness of the data.
+      0 # IIO_CHAN_ENDIAN_CPU
+      1 # IIO_CHAN_ENDIAN_BE
+      2 # IIO_CHAN_ENDIAN_LE

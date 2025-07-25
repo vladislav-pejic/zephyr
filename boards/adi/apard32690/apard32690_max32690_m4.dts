@@ -117,6 +117,7 @@
 
 	zephyr,user {
 		io-channels = <&adc4052_eval_ad4052_ardz 0>;
+		iio-channels = <&adc4052_eval_ad4052_ardz 0>;
 	};
 };
 
@@ -200,9 +201,10 @@ arduino_spi: &spi1 {
 		#address-cells = <1>;
 		#size-cells = <0>;
 		#io-channel-cells = <1>;
+		#iio-channel-cells = <1>;
 		status = "okay";
 		compatible = "adi,ad4052-adc";
-
+		
 		channel@0 {
 			reg = <0>;
 			zephyr,gain = "ADC_GAIN_1";
@@ -210,6 +212,17 @@ arduino_spi: &spi1 {
 			zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
 			zephyr,resolution = <16>;
 			zephyr,vref-mv = <2500>;
+		};
+
+		iio_channel {
+			compatible = "iio-lib,iio-channel";
+			chan-type = <0>;
+			channel = <0>;
+			indexed;
+			differential;
+			scan-type-sign = "s";
+			scan-type-realbits = <16>;
+			scan-type-endianness = <0>;
 		};
 	};
 };

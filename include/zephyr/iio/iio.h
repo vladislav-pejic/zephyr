@@ -47,7 +47,7 @@ enum iio_chan_info_enum {
 };
 
 enum iio_chan_type {
-	IIO_VOLTAGE,
+	IIO_VOLTAGE = 0,
 	IIO_CURRENT,
 	IIO_POWER,
 	IIO_ACCEL,
@@ -126,7 +126,7 @@ enum iio_event_info {
 };
 
 enum iio_endian {
-	IIO_CPU,
+	IIO_CPU = 0,
 	IIO_BE,
 	IIO_LE,
 };
@@ -199,8 +199,8 @@ struct iio_dev {
  * @storagebits:	Realbits + padding
  * @shift:		Shift right by this before masking out realbits.
  * @repeat:		Number of times real/storage bits repeats. When the
- *			repeat element is more than 1, then the type element in
- *			sysfs will show a repeat value. Otherwise, the number
+ *			repeat element is more than 1, then the type element
+ 			will show a repeat value. Otherwise, the number
  *			of repetitions is omitted.
  * @endianness:		little or big endian
  */
@@ -492,19 +492,26 @@ struct iio_info {
 				      unsigned count);
 };
 
+#define IIO_DEVICE_DT_NAME(node_id)					\
+	_CONCAT(__iio_dev, DEVICE_DT_NAME_GET(node_id))
+
+ #define IIO_CHAN_SPEC_AND_COMMA(node_id, prop, idx)
+				\
+	// DT_FOREACH_PROP_ELEM(DT_PATH(zephyr_user), iio_channels,			\
+	// 		     IIO_CHAN_SPEC_AND_COMMA)					\
+	// };								
 /**
  * @brief Statically define and initialize an IIO device
  *
  * @param name Name of the IIO device
  * @param dev_ptr Pointer to the parent device structure
- * @param channel Channel specification structure array pointer
- * @param num_channel Number of channels in the channel specification
  */
-#define IIO_DEVICE_DEFINE(name, node_id, channel, num_channel)		\
-	STRUCT_SECTION_ITERABLE(iio_dev, name) = {		\
-		.dev = DEVICE_DT_GET(node_id),			\
-		.channels = channel,				\
-		.num_channels = num_channel,			\
+#define IIO_DEVICE_DEFINE(node_id)							\
+	static const struct iio_chan_spec iio_channels_##node_id = {};			\
+	STRUCT_SECTION_ITERABLE(iio_dev, IIO_DEVICE_DT_NAME(node_id)) = {		\
+		.dev = DEVICE_DT_GET(node_id),						\
+		.channels = &iio_channels_##node_id,					\
+		.num_channels = 1,							\
 	}
 
 static inline void __iio_list_add(struct iio_attr_list *new,

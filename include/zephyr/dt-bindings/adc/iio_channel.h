@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2025 Analog Devices Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+#ifndef ZEPHYR_INCLUDE_DT_BINDINGS_IIO_H_
+#define ZEPHYR_INCLUDE_DT_BINDINGS_IIO_H_
+
+/**
+ * @defgroup IIO channel types
+ * @{
+ */
+
+/**
+ * @defgroup iio_chan_type IIO Channel Types
+ * @{
+ */
+#define IIO_CHAN_TYPE_VOLTAGE 			0
+#define IIO_CHAN_TYPE_CURRENT 			1
+#define IIO_CHAN_TYPE_POWER 			2
+#define IIO_CHAN_TYPE_ACCEL 			3
+#define IIO_CHAN_TYPE_ANGL_VELOCITY 		4
+#define IIO_CHAN_TYPE_MAGNETIC 			5
+#define IIO_CHAN_TYPE_LIGHT 			6
+#define IIO_CHAN_TYPE_INTENSITY 		7
+#define IIO_CHAN_TYPE_PROXIMITY 		8
+#define IIO_CHAN_TYPE_TEMPERATURE 		9
+#define IIO_CHAN_TYPE_INCLINOMETER 		10
+#define IIO_CHAN_TYPE_ROTATION 			11
+#define IIO_CHAN_TYPE_ANGLE 			12
+#define IIO_CHAN_TYPE_TIMESTAMP 		13
+#define IIO_CHAN_TYPE_CAPACITANCE 		14
+#define IIO_CHAN_TYPE_ALTVOLTAGE 		15
+#define IIO_CHAN_TYPE_CCTEMP 			16
+#define IIO_CHAN_TYPE_PRESSURE 			17
+#define IIO_CHAN_TYPE_HUMIDITYRELATIVE 		18
+#define IIO_CHAN_TYPE_ACTIVITY 			19
+#define IIO_CHAN_TYPE_STEPS			20
+#define IIO_CHAN_TYPE_ENERGY 			21
+#define IIO_CHAN_TYPE_DISTANCE 			22
+#define IIO_CHAN_TYPE_VELOCITY 			23
+#define IIO_CHAN_TYPE_CONCENTRATION 		24
+#define IIO_CHAN_TYPE_RESISTANCE 		25
+#define IIO_CHAN_TYPE_PH 			26
+#define IIO_CHAN_TYPE_UVINDEX 			27
+#define IIO_CHAN_TYPE_ELECTRICALCONDUCTIVITY 	28
+#define IIO_CHAN_TYPE_COUNT 			29
+#define IIO_CHAN_TYPE_INDEX 			30
+#define IIO_CHAN_TYPE_GRAVITY 			31
+#define IIO_CHAN_TYPE_POSITIONRELATIVE 		32
+#define IIO_CHAN_TYPE_PHASE 			33
+#define IIO_CHAN_TYPE_MASSCONCENTRATION 	34
+#define IIO_CHAN_TYPE_DELTA_ANGLE 		35
+#define IIO_CHAN_TYPE_DELTA_VELOCITY 		36
+#define IIO_CHAN_TYPE_GENERIC_DATA 		37
+#define IIO_CHAN_TYPE_FLAGS 			38
+
+/** @} */
+
+/**
+ * @defgroup iio_endian IIO channel endianness
+ * @{
+ */
+#define	IIO_CHAN_ENDIAN_CPU 	0
+#define	IIO_CHAN_ENDIAN_BE	1
+#define	IIO_CHAN_ENDIAN_LE	2
+
+/** @} */
+
+#endif /* ZEPHYR_INCLUDE_DT_BINDINGS_IIO_H_ */

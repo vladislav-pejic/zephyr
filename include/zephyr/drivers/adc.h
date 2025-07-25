@@ -17,6 +17,10 @@
 #include <zephyr/dt-bindings/adc/adc.h>
 #include <zephyr/kernel.h>
 
+#if CONFIG_IIO
+#include <zephyr/iio/iio.h>
+#endif /* CONFIG_IIO */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -542,6 +546,47 @@ struct adc_dt_spec {
  * @return Static initializer for an adc_dt_spec structure.
  */
 #define ADC_DT_SPEC_INST_GET(inst) ADC_DT_SPEC_GET(DT_DRV_INST(inst))
+
+#if CONFIG_IIO
+#define ADC_IIO_DT_DEFINE(node_id)					\
+	IIO_DEVICE_DEFINE(node_id)
+#else
+#define ADC_IIO_DT_DEFINE(node_id)
+#endif /* CONFIG_IIO */
+
+/**
+ * @brief Like DEVICE_DT_DEFINE() with ADC specifics.
+ *
+ * @details Defines a device which implements the ADC API.
+ *
+ * @param node_id The devicetree node identifier.
+ *
+ * @param init_fn Name of the init function of the driver.
+ *
+ * @param pm_device PM device resources reference (NULL if device does not use
+ * PM).
+ *
+ * @param data_ptr Pointer to the device's private data.
+ *
+ * @param cfg_ptr The address to the structure containing the configuration
+ * information for this instance of the driver.
+ *
+ * @param level The initialization level. See SYS_INIT() for details.
+ *
+ * @param prio Priority within the selected initialization level. See
+ * SYS_INIT() for details.
+ *
+ * @param api_ptr Provides an initial pointer to the API function struct used
+ * by the driver. Can be NULL.
+ */
+#define ADC_DEVICE_DT_DEFINE(node_id, init_fn, pm_device,		\
+				data_ptr, cfg_ptr, level, prio,		\
+				api_ptr, ...)				\
+	DEVICE_DT_DEFINE(node_id, init_fn, pm_device,			\
+			 data_ptr, cfg_ptr, level, prio,		\
+			 api_ptr, __VA_ARGS__);				\
+									\
+	ADC_IIO_DT_DEFINE(node_id);
 
 /* Forward declaration of the adc_sequence structure. */
 struct adc_sequence;
