@@ -492,27 +492,40 @@ struct iio_info {
 				      unsigned count);
 };
 
-#define IIO_DEVICE_DT_NAME(node_id)					\
+#define IIO_DEVICE_DT_NAME(node_id)						\
 	_CONCAT(__iio_dev, DEVICE_DT_NAME_GET(node_id))
 
- #define IIO_CHAN_SPEC_AND_COMMA(node_id, prop, idx)
-				\
-	// DT_FOREACH_PROP_ELEM(DT_PATH(zephyr_user), iio_channels,			\
-	// 		     IIO_CHAN_SPEC_AND_COMMA)					\
-	// };								
+#define IIO_CHANNEL_INIT(child)							\
+{										\
+	.type = DT_PROP(child, chan_type),					\
+	.channel = DT_PROP(child, channel),					\
+	.scan_index = DT_PROP(child, scan_index),				\
+	.indexed = DT_PROP_OR(child, indexed, 0),				\
+	.differential = DT_PROP_OR(child, differential, 0),			\
+	.scan_type = {								\
+		.sign = DT_PROP(child, scan_type_sign)[0],			\
+		.realbits = DT_PROP(child, scan_type_realbits),			\
+		.endianness = DT_PROP(child, scan_type_endianness),		\
+	},									\
+}
+
 /**
  * @brief Statically define and initialize an IIO device
  *
  * @param name Name of the IIO device
  * @param dev_ptr Pointer to the parent device structure
  */
-#define IIO_DEVICE_DEFINE(node_id)							\
-	static const struct iio_chan_spec iio_channels_##node_id = {};			\
-	STRUCT_SECTION_ITERABLE(iio_dev, IIO_DEVICE_DT_NAME(node_id)) = {		\
-		.dev = DEVICE_DT_GET(node_id),						\
-		.channels = &iio_channels_##node_id,					\
-		.num_channels = 1,							\
-	}
+#define IIO_DEVICE_DEFINE(node_id)								\
+	static const struct iio_chan_spec							\
+	iio_channels_##node_id[] = {								\
+		DT_FOREACH_CHILD_SEP(DT_CHILD(node_id, iio_channels), IIO_CHANNEL_INIT, (,))	\
+	};											\
+	STRUCT_SECTION_ITERABLE(iio_dev, IIO_DEVICE_DT_NAME(node_id)) = {			\
+		.dev = DEVICE_DT_GET(node_id),							\
+		.channels = iio_channels_##node_id,						\
+		.num_channels = ARRAY_SIZE(iio_channels_##node_id),				\
+	};											\
+	const struct iio_dev *iio_dev_ptr = &IIO_DEVICE_DT_NAME(node_id);
 
 static inline void __iio_list_add(struct iio_attr_list *new,
 			      struct iio_attr_list *prev,

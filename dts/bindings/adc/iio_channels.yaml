@@ -1,0 +1,4 @@
+compatible: "iio-lib,iio-channels"
+description: IIO channel node for Zephyr IIO subsystem.
+
+include: iio_channel_base.yaml

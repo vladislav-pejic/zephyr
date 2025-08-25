@@ -13,9 +13,7 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/byteorder.h>
 
-#ifdef CONFIG_IIO
 #include <zephyr/iio/iio.h>
-#endif /* CONFIG_IIO */
 
 LOG_MODULE_REGISTER(adc_ad405x, CONFIG_ADC_LOG_LEVEL);
 
@@ -179,9 +177,6 @@ struct adc_ad405x_data {
 	struct k_sem sem_drdy;
 	uint8_t has_drdy;
 #endif
-#if CONFIG_IIO
-	struct iio_dev *iio_dev;
-#endif /* CONFIG_IIO */
 };
 
 static bool ad405x_bus_is_ready_spi(const union ad405x_bus *bus)
@@ -811,6 +806,9 @@ static int adc_ad405x_init(const struct device *dev)
 	uint8_t reg_val_hi;
 	uint16_t reg_val_res;
 
+	extern const struct iio_dev *iio_dev_ptr;
+	iio_device_register(iio_dev_ptr);
+
 	if (!adc_ad405x_bus_is_ready(dev)) {
 		LOG_ERR("bus not ready");
 		return -ENODEV;
@@ -901,33 +899,10 @@ static int adc_ad405x_init(const struct device *dev)
 	}
 #endif
 
-#if CONFIG_IIO
-	ret = iio_device_register(data->iio_dev);
-#endif /* CONFIG_IIO */
-
 	adc_context_unlock_unconditionally(&data->ctx);
 	data->dev = dev;
 	return ret;
 }
-
-#ifdef CONFIG_IIO
-
-#define AD405X_DIFF_CHANNEL(_sign, _real_bits)					\
-	.type = IIO_VOLTAGE,							\
-	.indexed = 1,								\
-	.differential = 1,							\
-	.channel = 0,								\
-	.scan_index = 0,							\
-	.scan_type = {								\
-		.sign = _sign,							\
-		.realbits = _real_bits,						\
-		.endianness = IIO_CPU						\
-	},
-
-static const struct iio_chan_spec ad405x_channel = {
-	AD405X_DIFF_CHANNEL('s', AD4052_ADC_RESOLUTION)
-};
-#endif /* CONFIG_IIO */
 
 static DEVICE_API(adc, ad405x_api_funcs) = {
 	.channel_setup = ad405x_channel_setup,

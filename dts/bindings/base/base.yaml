@@ -179,16 +179,6 @@ properties:
     description: |
       IO channel specifiers relevant to the device.
 
-  iio-channels:
-    type: phandle-array
-    description: |
-      IIO channel specifiers relevant to the device.
-
-  "#iio-channel-cells":
-    type: int
-    description: |
-      Number of cells in IIO channel specifiers in the "iio-channels" property.
-
   io-channel-names:
     type: string-array
     description: |
@@ -225,6 +215,3 @@ properties:
     description: |
       Do not initialize device automatically on boot. Device should be manually
       initialized using device_init().
-
-iio-channel-cells:
-  - input

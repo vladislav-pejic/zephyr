@@ -1,7 +1,7 @@
-compatible: "iio-lib,iio-channel"
+compatible: "iio-lib,iio-channel-base"
 description: IIO channel node for Zephyr IIO subsystem.
 
-properties:      
+properties:
   chan-type:
     type: int
     description: |
@@ -105,3 +105,6 @@ properties:
       0 # IIO_CHAN_ENDIAN_CPU
       1 # IIO_CHAN_ENDIAN_BE
       2 # IIO_CHAN_ENDIAN_LE
+
+iio-channel-cells:
+  - input
